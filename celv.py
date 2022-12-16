@@ -33,12 +33,12 @@ def main():
         option = input(path+"> ")
         if p.match(option):
             #try:
-            [arbolito,version] = tree.crear_dir(arbolito,option[10:-1])
+            [arbolito,version] = tree.crear_dir(arbolito,option[10:-1],version)
             #except:
             #    print('Error: Nombre ya en uso!!')
         elif p1.match(option):
             #try:
-            [arbolito,version] = tree.crear_archivo(arbolito,option[14:-1])
+            [arbolito,version] = tree.crear_archivo(arbolito,option[14:-1],version)
             #except:
             #    print('Error: Nombre ya en uso!!')
         elif p2.match(option):
@@ -96,7 +96,7 @@ def main():
 
         elif p11.match(option):
         
-            [arbolito,version]=tree.celv_vamos(arbolito,option[11:-1])
+            [arbolito,version]=tree.celv_vamos(arbolito,int(option[11:-1]))
         
         elif p20.match(option):
 
