@@ -7,7 +7,9 @@ def main():
     print("Ah cierto, un manejador de versiones de archivos")
     print("Puedes Crear Directorios, archivos asi como eliminarlos")
     print("Si desea saber los comandos a usar escriba 'help' en el repl")
+    
     arbolito = None
+    version = 0
 
     p = re.compile('^crear_dir\((\S)+\)$')
     p1 = re.compile('^crear_archivo\((\S)+\)$')
@@ -19,47 +21,52 @@ def main():
     p7 = re.compile('^imprimir$')
     p8 = re.compile('^salir$')
     p9 = re.compile('^celv_importar\((\S)+\)$')
+    p10 = re.compile('^celv_iniciar\(\)$')
+    p11 = re.compile('^celv_vamos\((\d)+\)$')
+    p20 = re.compile('^hijos\(\)$')
+    p21 = re.compile('^version$')
+    p22 = re.compile('^safe$')
 
     path = "/"
     while True:
         
         option = input(path+"> ")
         if p.match(option):
-            try:
-                tree.crear_dir(arbolito,option[10:-1])
-            except:
-                print('Error: Nombre ya en uso!!')
+            #try:
+            [arbolito,version] = tree.crear_dir(arbolito,option[10:-1])
+            #except:
+            #    print('Error: Nombre ya en uso!!')
         elif p1.match(option):
-            try:
-                tree.crear_archivo(arbolito,option[14:-1])
-            except:
-                print('Error: Nombre ya en uso!!')
+            #try:
+            [arbolito,version] = tree.crear_archivo(arbolito,option[14:-1])
+            #except:
+            #    print('Error: Nombre ya en uso!!')
         elif p2.match(option):
-            try:
-                tree.eliminar(arbolito,option[9:-1])
-            except:
-                print('Error: Archivo No existe!!')
+            print(option[9:-1])
+            #try:
+            [arbolito,version] = tree.eliminar(arbolito,option[9:-1],version)
+            #except:
+            #    print('Error: Archivo No existe!!')
         elif p3.match(option):
 
             try:
-                tree.leer(arbolito,option[5:-1])
+                tree.leer(arbolito,option[5:-1],version)
             except:
                 print('Error: Archivo No existe!!')
 
         elif p4.match(option):
 
             token = option[9:-1].split(",")
-            try:
-                tree.escribir(arbolito,token[0],token[1])
-            except:
-                print('Error: Archivo No existe!!')
+            #try:
+            [arbolito,version] = tree.escribir(arbolito,token[0],token[1],version)
+            #except:
+            #    print('Error: Archivo No existe!!')
 
         elif p5.match(option):
-
-            try:
-                arbolito = tree.ir(arbolito,option[3:-1])
-            except:
-                pass
+            #try:
+            [arbolito,version] = tree.ir(arbolito,option[3:-1],version)
+            #except:
+            #    pass
             
         elif p6.match(option):
 
@@ -75,14 +82,33 @@ def main():
             print("--salir , es usado para salir del repl\n")
             
         elif p7.match(option):
-
-            tree.imprimir_arbol(arbolito,0)
+            tree.imprimir_arbol(arbolito,0,version)
 
         elif p8.match(option):
             break
         elif p9.match(option):
 
             arbolito = tree.celv_importar(option[14:-1])
+
+        elif p10.match(option):
+
+            tree.celv_iniciar(arbolito)
+
+        elif p11.match(option):
+        
+            [arbolito,version]=tree.celv_vamos(arbolito,option[11:-1])
+        
+        elif p20.match(option):
+
+            tree.print_hijos(arbolito)
+
+        elif p21.match(option):
+
+            print(version)
+
+        elif p22.match(option):
+
+            tree.printSafelock(arbolito)
 
         else:
             print("No se encontró la instrucción, coloque 'help' para ver los comandos disponibles")
