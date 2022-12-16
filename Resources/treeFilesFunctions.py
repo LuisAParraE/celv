@@ -1155,7 +1155,7 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             newList1 = []
 
             for childs in arbolito.children:
-                newList.append(childs)
+                newList1.append(childs)
 
             newDirectory = directory(arbolito.name,newFather,newList1,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
