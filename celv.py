@@ -23,6 +23,8 @@ def main():
     p9 = re.compile('^celv_importar\((\S)+\)$')
     p10 = re.compile('^celv_iniciar\(\)$')
     p11 = re.compile('^celv_vamos\((\d)+\)$')
+    p12 = re.compile('^pwd$')
+    p13 = re.compile('^celv_historia\(\)$')
     p20 = re.compile('^hijos\(\)$')
     p21 = re.compile('^version$')
     p22 = re.compile('^safe$')
@@ -32,21 +34,21 @@ def main():
         
         option = input(path+"> ")
         if p.match(option):
-            #try:
-            [arbolito,version] = tree.crear_dir(arbolito,option[10:-1],version)
-            #except:
-            #    print('Error: Nombre ya en uso!!')
+            try:
+                [arbolito,version] = tree.crear_dir(arbolito,option[10:-1],version)
+            except:
+                print('Error: Nombre ya en uso!!')
         elif p1.match(option):
-            #try:
-            [arbolito,version] = tree.crear_archivo(arbolito,option[14:-1],version)
-            #except:
-            #    print('Error: Nombre ya en uso!!')
+            try:
+                [arbolito,version] = tree.crear_archivo(arbolito,option[14:-1],version)
+            except:
+                print('Error: Nombre ya en uso!!')
         elif p2.match(option):
             print(option[9:-1])
-            #try:
-            [arbolito,version] = tree.eliminar(arbolito,option[9:-1],version)
-            #except:
-            #    print('Error: Archivo No existe!!')
+            try:
+                [arbolito,version] = tree.eliminar(arbolito,option[9:-1],version)
+            except:
+                print('Error: Archivo No existe!!')
         elif p3.match(option):
 
             try:
@@ -57,16 +59,16 @@ def main():
         elif p4.match(option):
 
             token = option[9:-1].split(",")
-            #try:
-            [arbolito,version] = tree.escribir(arbolito,token[0],token[1],version)
-            #except:
-            #    print('Error: Archivo No existe!!')
+            try:
+                [arbolito,version] = tree.escribir(arbolito,token[0],token[1],version)
+            except:
+                print('Error: Archivo No existe!!')
 
         elif p5.match(option):
-            #try:
-            [arbolito,version] = tree.ir(arbolito,option[3:-1],version)
-            #except:
-            #    pass
+            try:
+                [arbolito,version] = tree.ir(arbolito,option[3:-1],version)
+            except:
+                pass
             
         elif p6.match(option):
 
@@ -78,8 +80,11 @@ def main():
             print("--escribir(<nombre>,<contenido>) , es usado para escribir el contenido en un archivo\n")
             print("--ir(<nombre>) , es usado para ir a un directorio hijo de donde se encuentra. Si no se coloca un nombre, se va al padre del directorio actual\n")
             print("--help , es usado para mostrar los comandos disponibles\n")
+            print("--pwd , es usado para saber tu posicion en el arbol.\n")
+            print("--version , es usado para saber la version actual en la que se encuentra.\n")
             print("--imprimir , es usado para imprimir de manera recursiva los directorios y sus archivos\n")
             print("--celv_iniciar() , es usado para inicializar el arbol de versiones desde el nodo invocado, si ya esta inicializado dara error.\n")
+            print("--celv_historia() , es usado para mostrar los cambios realizados en el arbol de persistencia.\n")
             print("--celv_importar(<Dirección>) , es usado para importar de manera recursiva una dirección de tu PC a memoria, para poblar el arbol.\n")
             print("--celv_vamos(<nro>) , es usado para viajar a alguna version del arbol, siempre y cuando ya se haya inicializado.\n")
             print("--salir , es usado para salir del repl\n")
@@ -100,7 +105,18 @@ def main():
         elif p11.match(option):
         
             [arbolito,version]=tree.celv_vamos(arbolito,int(option[11:-1]))
-        
+
+        elif p12.match(option):
+            try:
+                tree.pwd(arbolito,version)
+            except:
+                print("Arbol No Generado")
+
+        elif p13.match(option):
+            try:
+                tree.celv_historia(arbolito)
+            except:
+                print("Arbol No Inicializado")
         elif p20.match(option):
 
             tree.print_hijos(arbolito)
@@ -115,7 +131,6 @@ def main():
 
         else:
             print("No se encontró la instrucción, coloque 'help' para ver los comandos disponibles")
-
 
 
 main()

@@ -1,10 +1,22 @@
 from Resources.directoryAndFile import directory, file, safelock
 from pathlib import Path
 
+class history:
+    actualVersion = 0
+    instruction = ""
+    arguments = ""
+    originVersion = 0
+
+    def __init__(self,newVersion,job,args,lastVersion) -> None:
+        self.actualVersion = newVersion
+        self.instruction = job
+        self.arguments = args
+        self.originVersion = lastVersion
 
 class celvId:
     id = -1
     celvRoots = []
+    historyRecord = []
     versionCount = 0
 
     def __init__(self,id) -> None:
@@ -158,13 +170,11 @@ def encontrar_nombre(arbolito,name,version):
     if arbolito.celv:
         if isinstance(arbolito, directory):
             if arbolito.name == name:
-                print("error 1")
                 raise Exception
             if arbolito.safelock != None and arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
                 for element in arbolito.safelock.children:
                     if isinstance(element, directory):
                         if element.name == name:
-                            print("error 2")
                             raise Exception
                         
                         if arbolito.celv == False and element.celv:
@@ -179,48 +189,40 @@ def encontrar_nombre(arbolito,name,version):
 
                     elif isinstance(element, file):
                         if element.name == name:
-                            print("error 3")
                             raise Exception
             else:
                 for element in arbolito.children:
                     if isinstance(element, directory):
 
                         if element.name == name:
-                            print("error 2")
                             raise Exception
                         encontrar_nombre(element,name,version)
 
                     elif isinstance(element, file):
                         if element.name == name:
-                            print("error 3")
                             raise Exception
 
         elif isinstance(arbolito, file):
             if arbolito.name == name:
-                print("error 4")
                 raise Exception
     else:
         if isinstance(arbolito, directory):
             if arbolito.name == name:
-                print("error 1")
                 raise Exception
 
             for element in arbolito.children:
                 if isinstance(element, directory):
 
                     if element.name == name:
-                        print("error 2")
                         raise Exception
                     encontrar_nombre(element,name,version)
 
                 elif isinstance(element, file):
                     if element.name == name:
-                        print("error 3")
                         raise Exception
 
         elif isinstance(arbolito, file):
             if arbolito.name == name:
-                print("error 4")
                 raise Exception
 
 def crear_dir(arbolito,name,version):
@@ -234,14 +236,18 @@ def crear_dir(arbolito,name,version):
                 versionIndex = i
                 break
 
-        celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
+        
         if isinstance(arbolito,directory):
+            celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
             newChild = directory(name,arbolito,[],celvVersions[versionIndex].versionCount)
             newChild.celv = True
             newChild.celvIndex = celvVersions[versionIndex].id
+            
+            histogram = history(celvVersions[versionIndex].versionCount,"crear_dir",name,version)
+            celvVersions[versionIndex].historyRecord.append(histogram)
 
             if arbolito.safelock ==None:
-                print("crear 1")
+                
                 newList = []
 
                 for childs in arbolito.children:
@@ -250,10 +256,10 @@ def crear_dir(arbolito,name,version):
                 arbolito.safelock.children.append(newChild)
                 return (arbolito,celvVersions[versionIndex].versionCount)
             else:
-                print("crear 2")
+                
                 return (updateTreeAdd(arbolito,newChild,versionIndex,version),celvVersions[versionIndex].versionCount)
         else:
-            print("error 5")
+            
             raise Exception
     else:
         if isinstance(arbolito,directory):
@@ -261,7 +267,7 @@ def crear_dir(arbolito,name,version):
             arbolito.addChildren(newChild)
             return (arbolito,0)
         else:
-            print("error 6")
+            
             raise Exception
 
 def crear_archivo(arbolito,name,version):
@@ -275,14 +281,17 @@ def crear_archivo(arbolito,name,version):
                 versionIndex = i
                 break
 
-        celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
         if isinstance(arbolito,directory):
+            celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
             newChild = file(name,arbolito,celvVersions[versionIndex].versionCount)
             newChild.celv =  True
             newChild.celvIndex = celvVersions[versionIndex].id
 
+            histogram = history(celvVersions[versionIndex].versionCount,"crear_archivo",name,version)
+            celvVersions[versionIndex].historyRecord.append(histogram)
+
             if arbolito.safelock ==None:
-                print("crear 1")
+                
                 newList = []
 
                 for childs in arbolito.children:
@@ -291,19 +300,19 @@ def crear_archivo(arbolito,name,version):
                 arbolito.safelock.children.append(newChild)
                 return (arbolito,celvVersions[versionIndex].versionCount)
             else:
-                print("crear 2")
+                
                 return (updateTreeAdd(arbolito,newChild,versionIndex,version),celvVersions[versionIndex].versionCount)
         else:
-            print("error 5")
+            
             raise Exception
     else:
-        print("uwu")
+        
         if isinstance(arbolito,directory):
             newChild = file(name,arbolito,0)
             arbolito.addChildren(newChild)
             return (arbolito,0)
         else:
-            print("error 6")
+            
             raise Exception
 
 def escribir(arbolito, name, content,version):
@@ -356,7 +365,8 @@ def escribirTree(arbolito,name,content,version):
                                     versionIndex = i
                                     break
                             celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-
+                            histogram = history(celvVersions[versionIndex].versionCount,"escribir",name+","+content,version)
+                            celvVersions[versionIndex].historyRecord.append(histogram)
                             if element.safelock == None:
                                 element.changeSafelock(celvVersions[versionIndex].versionCount,-1,-1,content)
                                 return (element.father,celvVersions[versionIndex].versionCount)
@@ -389,7 +399,8 @@ def escribirTree(arbolito,name,content,version):
                                     versionIndex = i
                                     break
                             celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-                            
+                            histogram = history(celvVersions[versionIndex].versionCount,"escribir",name+","+content,version)
+                            celvVersions[versionIndex].historyRecord.append(histogram)
                             if element.safelock == None:
                                 element.changeSafelock(celvVersions[versionIndex].versionCount,-1,-1,content)
                                 return (element.father,celvVersions[versionIndex].versionCount)
@@ -448,7 +459,7 @@ def eliminarTree(arbolito,name,version):
     deleted = None
     if isinstance(arbolito, directory):
             if arbolito.name == name:
-                print("eliminar 1")
+                
                 versionIndex = 0
                 for i in range(0,len(celvVersions)):
                     if celvVersions[i].id == arbolito.celvIndex:
@@ -457,7 +468,8 @@ def eliminarTree(arbolito,name,version):
 
                 if arbolito.safelock != None and arbolito.safelock.father != -1:
                     celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-
+                    histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                    celvVersions[versionIndex].historyRecord.append(histogram)
                     if arbolito.safelock.father.safelock == None:
                         newList = []
 
@@ -503,6 +515,8 @@ def eliminarTree(arbolito,name,version):
                     else:
                         
                         celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
+                        histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                        celvVersions[versionIndex].historyRecord.append(histogram)
 
                         if arbolito.father.safelock == None:
                             newList = []
@@ -543,14 +557,16 @@ def eliminarTree(arbolito,name,version):
                     for element in arbolito.safelock.children:
                         if isinstance(element, directory):
                             if element.name == name:
-                                print("eliminar 2")
+                                
                                 versionIndex = 0
                                 for i in range(0,len(celvVersions)):
                                     if celvVersions[i].id == arbolito.celvIndex:
                                         versionIndex = i
                                         break
                                 celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-                                
+                                histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                                celvVersions[versionIndex].historyRecord.append(histogram)
+
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
                                     if element.safelock.father.safelock == None:
                                         newList = []
@@ -630,16 +646,17 @@ def eliminarTree(arbolito,name,version):
                                     pass
                         elif isinstance(element, file):
                             if element.name == name:
-                                print("eliminar 3")
+                                
                                 versionIndex = 0
                                 for i in range(0,len(celvVersions)):
                                     if celvVersions[i].id == arbolito.celvIndex:
                                         versionIndex = i
                                         break
                                 celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-
+                                histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                                celvVersions[versionIndex].historyRecord.append(histogram)
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
-                                    print("eliminar 3.1")
+                                    
                                     if element.safelock.father.safelock == None:
                                         newList = []
 
@@ -679,9 +696,9 @@ def eliminarTree(arbolito,name,version):
 
                                         return(newFather,celvVersions[versionIndex].versionCount)
                                 else:
-                                    print("eliminar 3.2")
+                                    
                                     if element.father.safelock == None:
-                                        print("eliminar 3.2.1")
+                                        
                                         newList = []
 
                                         for childs in element.father.children:
@@ -692,7 +709,7 @@ def eliminarTree(arbolito,name,version):
 
                                         return(element.father,celvVersions[versionIndex].versionCount)
                                     elif element.father.safelock != None:
-                                        print("eliminar 3.2.2")
+                                        
                                         newList = []
 
                                         for childs in element.father.children:
@@ -722,14 +739,15 @@ def eliminarTree(arbolito,name,version):
                     for element in arbolito.children:
                         if isinstance(element, directory):
                             if element.name == name:
-                                print("eliminar 4")
+                                
                                 versionIndex = 0
                                 for i in range(0,len(celvVersions)):
                                     if celvVersions[i].id == arbolito.celvIndex:
                                         versionIndex = i
                                         break
                                 celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-                                
+                                histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                                celvVersions[versionIndex].historyRecord.append(histogram)
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
                                     if element.safelock.father.safelock == None:
                                         element.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,element.safelock.father.children,-1)
@@ -785,14 +803,15 @@ def eliminarTree(arbolito,name,version):
                                     pass
                         elif isinstance(element, file):
                             if element.name == name:
-                                print("eliminar 5")
+                                
                                 versionIndex = 0
                                 for i in range(0,len(celvVersions)):
                                     if celvVersions[i].id == arbolito.celvIndex:
                                         versionIndex = i
                                         break
                                 celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
-
+                                histogram = history(celvVersions[versionIndex].versionCount,"eliminar",name,version)
+                                celvVersions[versionIndex].historyRecord.append(histogram)
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
                                     if element.safelock.father.safelock == None:
                                         element.safelock.father.changeSafelock(version,-1,element.safelock.father.children,-1)
@@ -898,7 +917,6 @@ def ir(arbolito,name,version):
                     print("Error: Ya se encuentra en la Raiz del arbol")
                     raise Exception
                 else:
-                    print("Padre1?")
                     if arbolito.father.celv:
                         return (arbolito.father, version)
                     else:
@@ -908,13 +926,11 @@ def ir(arbolito,name,version):
                     print("Error: Ya se encuentra en la Raiz del arbol")
                     raise Exception
                 else:
-                    print("Padre1?")
                     if arbolito.father.celv:
                         return (arbolito.father, version)
                     else:
                         return (arbolito.father, 0)
             elif arbolito.safelock == None and arbolito.father != None:
-                print("Padre2?")
                 if arbolito.father.celv:
                     return (arbolito.father, version)
                 else:
@@ -990,10 +1006,12 @@ def celv_importar(path):
     return baseDir
 
 def imprimir_arbol(arbolito,tab,version = 0):
+    """
     if arbolito.safelock != None:
         print("safelock: " + str(arbolito.safelock.version))
     else: 
         print(arbolito.version)
+    """
     if arbolito.celv:
         if isinstance(arbolito, file):
             for i in range(0,tab):
@@ -1030,7 +1048,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
 
     if arbolito.safelock != None and arbolito.safelock.father!= -1 and arbolito.safelock.version <= version:
         if arbolito.safelock.father.safelock == None and isinstance(arbolito.safelock.father, directory):
-            print("update 1.1")
 
             newList = []
 
@@ -1063,7 +1080,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             return newDirectory
 
         elif arbolito.safelock.father.safelock != None and isinstance(arbolito.safelock.father, directory):
-            print("update 1.2")
 
             newList = []
 
@@ -1117,7 +1133,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
 
     elif arbolito.father != None and arbolito.father.celv:
         if arbolito.father.safelock != None and isinstance(arbolito.father, directory):
-            print("update 2.2")
             newList = []
 
             for childs in arbolito.father.children:
@@ -1165,9 +1180,7 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             for element in newDirectory.children:
                 print(element.name)
             """
-            print(arbolito.father.name)
-            print(type(arbolito.father.safelock))
-            print("entro aca?")
+
             updateParents(arbolito.father,newFather,versionIndex,version)
             updateChildrenCicle(newDirectory,versionIndex,version)
             updateChildrenCicle(newFather,versionIndex,version)
@@ -1175,7 +1188,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             return newDirectory
             
         elif arbolito.father.safelock == None and isinstance(arbolito.father, directory):
-            print("update 2.1")
 
             newList = []
 
@@ -1212,7 +1224,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             return newDirectory
 
     elif arbolito.father != None and (not arbolito.father.celv):
-        print("update 3")
         newList = []
 
         for childs in arbolito.children:
@@ -1244,7 +1255,6 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
         return newRoot
 
     elif arbolito.father == None:
-        print("update 4")
 
         newList = []
 
@@ -1277,16 +1287,16 @@ def updateChildren(hijo, padre,versionIndex,version):
     global changeOnCicle
 
     if hijo.safelock == None and hijo.version == celvVersions[versionIndex].versionCount:
-        print("Entre")
+
         hijo.father = padre
     elif hijo.safelock == None and hijo.version <= version:
-        print("Entre 1")
+
         hijo.changeSafelock(celvVersions[versionIndex].versionCount,padre,-1,-1)
     elif hijo.safelock != None and hijo.safelock.version == celvVersions[versionIndex].versionCount:
-        print("Entre 2")
+
         hijo.safelock.father = padre
     elif hijo.safelock != None and hijo.safelock.version <= version:
-        print("Entre 3")
+
         if isinstance(hijo,directory):
 
             newList = []
@@ -1326,9 +1336,9 @@ def updateChildren(hijo, padre,versionIndex,version):
 
 def updateParents(padre, newPadre,versionIndex, version):
     global celvVersions
-    print(newPadre.name)
+
     if padre.father!= None and (not padre.celv):
-        print("Nueva Raiz 1")
+
         padre.father.children.remove(padre)
         padre.father.children.append(newPadre)
 
@@ -1337,13 +1347,13 @@ def updateParents(padre, newPadre,versionIndex, version):
         updateChildrenCicle(newPadre,versionIndex,version)
 
     elif padre.father == None:
-        print("Nueva Raiz 2")
+
         celvVersions[versionIndex].addRoot(newPadre)
 
         updateChildrenCicle(newPadre,versionIndex,version)
 
     elif padre.safelock !=None and padre.safelock.father != -1 and (padre.safelock.father.version == celvVersions[versionIndex].versionCount or padre.safelock.father.version <= version):
-        print("Actualizar papa del Safe")
+
         if padre.safelock.father.safelock == None and padre.safelock.father.version == celvVersions[versionIndex].versionCount:
             padre.safelock.father.children.remove(padre)
             padre.safelock.father.children.append(newPadre)
@@ -1390,13 +1400,13 @@ def updateParents(padre, newPadre,versionIndex, version):
             updateParents(padre.safelock.father, newAbuelo,versionIndex,version)
 
     elif padre.father!= None and padre.celv:
-        print("Actualizar padre ori")
+
         if padre.father.safelock == None and padre.father.version == celvVersions[versionIndex].versionCount:
-            print("opcion 1")
+
             padre.father.children.remove(padre)
             padre.father.children.append(newPadre)
         elif padre.father.safelock == None and padre.father.version <= version:
-            print("opcion 2")
+
 
             newList = []
 
@@ -1407,11 +1417,11 @@ def updateParents(padre, newPadre,versionIndex, version):
             padre.father.safelock.children.remove(padre)
             padre.father.safelock.children.append(newPadre)
         elif padre.father.safelock != None and padre.father.safelock.version == celvVersions[versionIndex].versionCount:
-            print("opcion 3")
+
             padre.father.safelock.children.remove(padre)
             padre.father.safelock.children.append(newPadre)
         elif padre.father.safelock != None and padre.father.safelock.version <= version:
-            print("opcion 4")
+
             newList = []
 
             for childs in padre.father.children:
@@ -1468,7 +1478,7 @@ def updateChildrenCicle(padre,versionIndex,version):
     global changeOnCicle
 
     if padre.safelock != None and padre.safelock.children != -1:
-        print("ciclo 1")
+        
         while True:
             changeOnCicle = False
             for element in padre.safelock.children:
@@ -1478,7 +1488,7 @@ def updateChildrenCicle(padre,versionIndex,version):
             if changeOnCicle == False:
                 break
     elif padre.safelock == None:
-        print("ciclo 2")
+        
         while True:
             changeOnCicle = False
             for element in padre.children:
@@ -1487,3 +1497,39 @@ def updateChildrenCicle(padre,versionIndex,version):
                     break
             if changeOnCicle == False:
                 break
+
+def pwd(arbolito,version):
+    path = ""
+    nextPos = arbolito
+    while True:
+        if nextPos == None:
+            path = "/"+path
+            break
+
+        path = nextPos.name + "/" + path
+
+        if nextPos.safelock != None and nextPos.safelock.father != -1 and nextPos.safelock.version <= version:
+            nextPos = nextPos.safelock.father
+        else:
+            nextPos = nextPos.father
+    print(path)
+
+def celv_historia(arbolito):
+    global celvVersions
+
+    versionIndex = 0
+    for i in range(0,len(celvVersions)):
+        if celvVersions[i].id == arbolito.celvIndex:
+            versionIndex = i
+            break
+    
+    for record in celvVersions[versionIndex].historyRecord:
+        print("--------------------------")
+        print("Version generada: " + str(record.actualVersion))
+        print("Instrucción: " + record.instruction)
+        if len(record.arguments)>23:
+            print("Argumentos: " + record.arguments[:11]+"..."+record.arguments[-11:])
+        else:
+            print("Argumentos: " + record.arguments)
+        print("Version origen: " + str(record.originVersion))
+        print("--------------------------")
