@@ -69,7 +69,7 @@ for element in children:
     newChildren.append(element)
 ```
 
--
+- The functions that have more impact on performance are **updateChildrenCicle** and **updateParents**. As its name implies, **updateChildrenCicle** update all the childrens when the a directory has been duplicated. This function is recursive only if a children is also duplicated by this action. On the same note we have **updateParents** that is in charge of update the parent information when a duplication happens, this is used together with **updateChildrenCicle** to maintain the info on the tree up to date. In the worst case escenario it will have to duplicate all the information of the tree `O(n^2)` with `n= total number of nodes on persistent tree`, but this will rarely happend due to the same tree behaviour.
 
 ## Last Words
 
