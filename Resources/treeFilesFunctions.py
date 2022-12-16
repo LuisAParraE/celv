@@ -461,13 +461,23 @@ def ir(arbolito,name,version):
 
     if arbolito.celv:
         if name == "":
-            if arbolito.safelock != None and arbolito.safelock.father != -1  and arbolito.safelock.version <= version:
+            if arbolito.safelock != None and arbolito.safelock.father != -1 and arbolito.safelock.version <= version:
                 if arbolito.safelock.father == None:
                     print("Error: Ya se encuentra en la Raiz del arbol")
                     raise Exception
                 else:
                     return (arbolito.safelock.father,version)
-            elif arbolito.safelock != None and arbolito.safelock.father != -1  and arbolito.safelock.version > version:
+            elif (arbolito.safelock != None and arbolito.safelock.father != -1  and arbolito.safelock.version > version):
+                if arbolito.father == None:
+                    print("Error: Ya se encuentra en la Raiz del arbol")
+                    raise Exception
+                else:
+                    print("Padre1?")
+                    if arbolito.father.celv:
+                        return (arbolito.father, version)
+                    else:
+                        return (arbolito.father, 0)
+            elif arbolito.safelock != None and arbolito.safelock.father == -1 :
                 if arbolito.father == None:
                     print("Error: Ya se encuentra en la Raiz del arbol")
                     raise Exception
@@ -526,7 +536,7 @@ def ir(arbolito,name,version):
                                     break
                             return (element,versionNumbr)
                         else:
-                            return (element,0)
+                            return (element, 0)
                 print("Error: Nombre no encontrado!!")
                 raise NameError
 
@@ -857,14 +867,17 @@ def print_hijos(arbolito):
                 print("name:" + element.name + ", version:" + str(element.version))
 
 def printSafelock(arbolito):
+
+    print(arbolito.father.name)
+
     if arbolito.safelock != None:
+        
         if arbolito.safelock.children != -1:
+            print("Hijos")
             for element in arbolito.safelock.children:
                 print(element.name)
         if arbolito.safelock.father != -1:
             print(arbolito.safelock.father.name)
-            if arbolito.father.safelock != None:
-                print("Esta si tiene Safelock")
         print(arbolito.safelock.version)
 
 def updateChildrenCicle(padre,version):
