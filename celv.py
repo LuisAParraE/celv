@@ -79,6 +79,9 @@ def main():
             print("--ir(<nombre>) , es usado para ir a un directorio hijo de donde se encuentra. Si no se coloca un nombre, se va al padre del directorio actual\n")
             print("--help , es usado para mostrar los comandos disponibles\n")
             print("--imprimir , es usado para imprimir de manera recursiva los directorios y sus archivos\n")
+            print("--celv_iniciar() , es usado para inicializar el arbol de versiones desde el nodo invocado, si ya esta inicializado dara error.\n")
+            print("--celv_importar(<Dirección>) , es usado para importar de manera recursiva una dirección de tu PC a memoria, para poblar el arbol.\n")
+            print("--celv_vamos(<nro>) , es usado para viajar a alguna version del arbol, siempre y cuando ya se haya inicializado.\n")
             print("--salir , es usado para salir del repl\n")
             
         elif p7.match(option):

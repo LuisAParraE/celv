@@ -46,18 +46,84 @@ def celv_vamos(arbolito,version):
             if celvVersions[i].id == arbolito.celvIndex:
                 versionIndex = i
                 break
-        print(version)
-        for element in celvVersions[i].celvRoots:
+
+        if version > celvVersions[versionIndex].versionCount:
+            raise Exception
+        for element in celvVersions[versionIndex].celvRoots:
             if element.safelock != None and element.safelock.version <= version:
-                print("Nodo 1")
                 newRoot = element
                 
             elif element.version <= version:
-                print("Nodo 2")
                 newRoot = element
-        return (newRoot,version)
+
+        node = findNode(newRoot,arbolito,version)
+
+        return (node,version)
     else:
         raise Exception
+
+def findNode(raiz,arbolito,version):
+    nextParent = arbolito
+    node = None
+    while True:
+        if nextParent.name == raiz.name:
+            return raiz
+
+        if raiz.safelock != None and raiz.safelock.children != -1 and raiz.safelock.version <= version:
+            for element in raiz.safelock.children:
+                if element.name == nextParent.name:
+                    return element
+                if isinstance(element, directory):
+                    try:
+                        node = findNodeName(element,nextParent.name,version)
+                        if node != None:
+                            return node
+                    except:
+                        pass
+        else:
+            for element in raiz.children:
+                if element.name == nextParent.name:
+                    return element
+                if isinstance(element, directory):
+                    try:
+                        node = findNodeName(element,nextParent.name,version)
+                        if node != None:
+                            return node
+                    except:
+                        pass
+        if nextParent.safelock != None and nextParent.safelock.father != -1 and nextParent.safelock.version <= version:
+            nextParent = nextParent.safelock.father
+        else:
+            nextParent = nextParent.father
+        
+
+def findNodeName(hijo,nombre,version):
+    if hijo.name == nombre:
+        return hijo
+
+    if hijo.safelock != None and hijo.safelock.children != -1 and hijo.safelock.version <= version:
+        for element in hijo.safelock.children:
+            if element.name == nombre:
+                return element
+            if isinstance(element, directory):
+                try:
+                    node = findNodeName(element,nombre,version)
+                    if node != None:
+                        return node
+                except:
+                    pass
+    else:
+        for element in hijo.children:
+            if element.name == nombre:
+                return element
+            if isinstance(element, directory):
+                try:
+                    node = findNodeName(element,nombre,version)
+                    if node != None:
+                        return node
+                except:
+                    pass
+    raise Exception
 
 def celv_inicilizator(arbolito,index):
     arbolito.celv = True
@@ -1236,8 +1302,8 @@ def updateChildren(hijo, padre,versionIndex,version):
 
                 newSafe = []
 
-            for childs in hijo.safelock.children:
-                newSafe.append(childs)
+                for childs in hijo.safelock.children:
+                    newSafe.append(childs)
                 newDirectory.children = newSafe
         
             if hijo.safelock.father != -1:
