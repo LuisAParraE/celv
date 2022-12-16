@@ -176,7 +176,11 @@ def crear_dir(arbolito,name,version):
 
             if arbolito.safelock ==None:
                 print("crear 1")
-                arbolito.changeSafelock(celvVersions[versionIndex].versionCount,-1,arbolito.children,-1)
+                newList = []
+
+                for childs in arbolito.children:
+                    newList.append(childs)
+                arbolito.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
                 arbolito.safelock.children.append(newChild)
                 return (arbolito,celvVersions[versionIndex].versionCount)
             else:
@@ -213,7 +217,11 @@ def crear_archivo(arbolito,name,version):
 
             if arbolito.safelock ==None:
                 print("crear 1")
-                arbolito.changeSafelock(celvVersions[versionIndex].versionCount,-1,arbolito.children,-1)
+                newList = []
+
+                for childs in arbolito.children:
+                    newList.append(childs)
+                arbolito.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
                 arbolito.safelock.children.append(newChild)
                 return (arbolito,celvVersions[versionIndex].versionCount)
             else:
@@ -385,17 +393,29 @@ def eliminarTree(arbolito,name,version):
                     celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
 
                     if arbolito.safelock.father.safelock == None:
-                        arbolito.safelock.father.changeSafelock(version,-1,arbolito.safelock.father.children,-1)
+                        newList = []
+
+                        for childs in arbolito.safelock.father.children:
+                            newList.append(childs)
+                        arbolito.safelock.father.changeSafelock(version,-1,newList,-1)
                         arbolito.safelock.father.children.remove(arbolito)
                         return(arbolito.safelock.father,version)
 
                     elif arbolito.safelock.father.safelock != None:
-                        newFather = directory(arbolito.safelock.father.name,arbolito.safelock.father.father,arbolito.safelock.father.children,version)
+                        newList = []
+
+                        for childs in arbolito.safelock.father.children:
+                            newList.append(childs)
+                        newFather = directory(arbolito.safelock.father.name,arbolito.safelock.father.father,newList,version)
                         newFather.celv = True
                         newFather.celvIndex = arbolito.safelock.father.celvIndex
 
                         if arbolito.safelock.father.safelock.children != -1:
-                            newFather.children = arbolito.safelock.father.safelock.children
+                            newSafe = []
+
+                            for childs in arbolito.safelock.father.safelock.children:
+                                newSafe.append(childs)
+                            newFather.children = newSafe
 
                         if arbolito.safelock.father.safelock.father != -1:
                             newFather.father = arbolito.safelock.father.safelock.father
@@ -419,17 +439,29 @@ def eliminarTree(arbolito,name,version):
                         celvVersions[versionIndex].versionCount = celvVersions[versionIndex].versionCount +1
 
                         if arbolito.father.safelock == None:
-                            arbolito.father.changeSafelock(version,-1,arbolito.father.children,-1)
+                            newList = []
+
+                            for childs in arbolito.father.children:
+                                newList.append(childs)
+                            arbolito.father.changeSafelock(version,-1,newList,-1)
                             arbolito.father.children.remove(arbolito)
                             return(arbolito.father,version)
 
                         elif arbolito.father.safelock != None:
-                            newFather = directory(arbolito.father.name,arbolito.father.father,arbolito.father.children,version)
+                            newList = []
+
+                            for childs in arbolito.father.children:
+                                newList.append(childs)
+                            newFather = directory(arbolito.father.name,arbolito.father.father,newList,version)
                             newFather.celv = True
                             newFather.celvIndex = arbolito.father.celvIndex
 
                             if arbolito.father.safelock.children != -1:
-                                newFather.children = arbolito.father.safelock.children
+                                newSafe = []
+
+                                for childs in arbolito.father.safelock.children:
+                                    newSafe.append(childs)
+                                newFather.children = newSafe
 
                             if arbolito.father.safelock.father != -1:
                                 newFather.father = arbolito.father.safelock.father
@@ -455,17 +487,29 @@ def eliminarTree(arbolito,name,version):
                                 
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
                                     if element.safelock.father.safelock == None:
-                                        element.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,element.safelock.father.children,-1)
+                                        newList = []
+
+                                        for childs in element.safelock.father.children:
+                                            newList.append(childs)
+                                        element.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
                                         element.safelock.father.children.remove(element)
 
                                         return(element.safelock.father,celvVersions[versionIndex].versionCount)
                                     elif element.safelock.father.safelock != None:
-                                        newFather = directory(element.safelock.father.name,element.safelock.father.father,element.safelock.father.children,celvVersions[versionIndex].versionCount)
+                                        newList = []
+
+                                        for childs in element.safelock.father.children:
+                                            newList.append(childs)
+                                        newFather = directory(element.safelock.father.name,element.safelock.father.father,newList,celvVersions[versionIndex].versionCount)
                                         newFather.celv = True
                                         newFather.celvIndex = element.safelock.father.celvIndex
 
                                         if element.safelock.father.safelock.children != -1 and element.safelock.father.safelock.version <= version:
-                                            newFather.children = element.safelock.father.safelock.children
+                                            newSafe = []
+
+                                            for childs in element.safelock.father.safelock.children:
+                                                newSafe.append(childs)
+                                            newFather.children = newSafe
 
                                         if element.safelock.father.safelock.father != -1 and element.safelock.father.safelock.version <= version:
                                             newFather.father = element.safelock.father.safelock.father
@@ -478,17 +522,29 @@ def eliminarTree(arbolito,name,version):
                                         return(newFather,celvVersions[versionIndex].versionCount)
                                 else:
                                     if element.father.safelock == None:
-                                        element.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,element.father.children,-1)
+                                        newList = []
+
+                                        for childs in element.father.children:
+                                            newList.append(childs)
+                                        element.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
                                         element.father.children.remove(element)
 
                                         return(element.father,celvVersions[versionIndex].versionCount)
                                     elif element.father.safelock != None:
-                                        newFather = directory(element.father.name,element.father.father,element.father.children,celvVersions[versionIndex].versionCount)
+                                        newList = []
+
+                                        for childs in element.father.children:
+                                            newList.append(childs)
+                                        newFather = directory(element.father.name,element.father.father,newList,celvVersions[versionIndex].versionCount)
                                         newFather.celv = True
                                         newFather.celvIndex = element.father.celvIndex
 
                                         if element.father.safelock.children != -1 and element.father.safelock.version <= version:
-                                            newFather.children = element.father.safelock.children
+                                            newSafe = []
+
+                                            for childs in element.father.safelock.children:
+                                                newSafe.append(childs)
+                                            newFather.children = newSafe
 
                                         if element.father.safelock.father != -1 and element.father.safelock.version <= version:
                                             newFather.father = element.father.safelock.father
@@ -519,18 +575,33 @@ def eliminarTree(arbolito,name,version):
                                 if element.safelock != None and element.safelock.father != -1 and element.safelock.version <= version:
                                     print("eliminar 3.1")
                                     if element.safelock.father.safelock == None:
-                                        element.safelock.father.changeSafelock(version,-1,element.safelock.father.children,-1)
+                                        newList = []
+
+                                        for childs in element.safelock.father.children:
+                                            newList.append(childs)
+
+                                        element.safelock.father.changeSafelock(version,-1,newList,-1)
                                         element.safelock.father.children.remove(element)
 
                                         return(element.safelock.father,celvVersions[versionIndex].versionCount)
 
                                     elif element.safelock.father.safelock != None:
-                                        newFather = directory(element.safelock.father.name,element.safelock.father.father,element.safelock.father.children,version)
+
+                                        newList = []
+
+                                        for childs in element.safelock.father.children:
+                                            newList.append(childs)
+
+                                        newFather = directory(element.safelock.father.name,element.safelock.father.father,newList,version)
                                         newFather.celv = True
                                         newFather.celvIndex = element.safelock.father.celvIndex
 
                                         if element.safelock.father.safelock.children != -1 and element.safelock.father.safelock.version <= version:
-                                            newFather.children = element.safelock.father.safelock.children
+                                            newSafe = []
+
+                                            for childs in element.safelock.father.safelock.children:
+                                                newSafe.append(childs)
+                                            newFather.children = newSafe
 
                                         if element.safelock.father.safelock.father != -1 and element.safelock.father.safelock.version <= version:
                                             newFather.father = element.safelock.father.safelock.father
@@ -545,18 +616,32 @@ def eliminarTree(arbolito,name,version):
                                     print("eliminar 3.2")
                                     if element.father.safelock == None:
                                         print("eliminar 3.2.1")
-                                        element.father.changeSafelock(version,-1,element.father.children,-1)
+                                        newList = []
+
+                                        for childs in element.father.children:
+                                            newList.append(childs)
+
+                                        element.father.changeSafelock(version,-1,newList,-1)
                                         element.father.children.remove(element)
 
                                         return(element.father,celvVersions[versionIndex].versionCount)
                                     elif element.father.safelock != None:
                                         print("eliminar 3.2.2")
-                                        newFather = directory(element.father.name,element.father.father,element.father.children,version)
+                                        newList = []
+
+                                        for childs in element.father.children:
+                                            newList.append(childs)
+
+                                        newFather = directory(element.father.name,element.father.father,newList,version)
                                         newFather.celv = True
                                         newFather.celvIndex = element.father.celvIndex
 
                                         if element.father.safelock.children != -1 and element.father.safelock.version <= version:
-                                            newFather.children = element.father.safelock.children
+                                            newSafe = []
+
+                                            for childs in element.father.safelock.children:
+                                                newSafe.append(childs)
+                                            newFather.children = newSafe
 
                                         if element.father.safelock.father != -1 and element.father.safelock.version <= version:
                                             newFather.father = element.father.safelock.father
@@ -707,7 +792,7 @@ def leer(arbolito,name,version):
                     if element.name == name:
                         if element.safelock != None and safelock.content !=-1 and element.safelock.version<=version:
                             print(element.safelock.content)
-                        elif element.safelock == None:
+                        else:
                             print(element.content)
                         return 0
         raise FileNotFoundError
@@ -853,12 +938,10 @@ def imprimir_arbol(arbolito,tab,version = 0):
                 print(" ",end="")
             print("<DIR>",end="")
             print(arbolito.name)
-            if arbolito.safelock != None and arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
-                print("aca?")      
+            if arbolito.safelock != None and arbolito.safelock.children != -1 and arbolito.safelock.version <= version:    
                 for element in arbolito.safelock.children:
                     imprimir_arbol(element,tab +5,version)
             else :
-                print("aqui?") 
                 for element in arbolito.children:
                     imprimir_arbol(element,tab +5,version)
                 
@@ -882,15 +965,30 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
     if arbolito.safelock != None and arbolito.safelock.father!= -1 and arbolito.safelock.version <= version:
         if arbolito.safelock.father.safelock == None and isinstance(arbolito.safelock.father, directory):
             print("update 1.1")
-            newDirectory = directory(arbolito.name,arbolito.safelock.father,arbolito.children,celvVersions[versionIndex].versionCount)
+
+            newList = []
+
+            for childs in arbolito.children:
+                newList.append(childs)
+
+            newDirectory = directory(arbolito.name,arbolito.safelock.father,newList,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
             newDirectory.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.safelock.children != -1:
-                newDirectory.children = arbolito.safelock.children
+
+                newSafe = []
+                for childs in arbolito.safelock.children:
+                    newSafe.append(childs)
+                newDirectory.children = newSafe
+
+            newList1 = []
+
+            for childs in arbolito.safelock.father.children:
+                newList1.append(childs)
 
             newDirectory.addChildren(newNode)
-            arbolito.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,arbolito.safelock.father.children,-1)
+            arbolito.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList1,-1)
             arbolito.safelock.father.safelock.children.remove(arbolito)
             arbolito.safelock.father.safelock.children.append(newDirectory)    
 
@@ -900,22 +998,41 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
 
         elif arbolito.safelock.father.safelock != None and isinstance(arbolito.safelock.father, directory):
             print("update 1.2")
-            newFather = directory(arbolito.safelock.father.name,arbolito.safelock.father.father,arbolito.safelock.father.children,celvVersions[versionIndex].versionCount)
+
+            newList = []
+
+            for childs in arbolito.safelock.father.children:
+                newList.append(childs)
+
+            newFather = directory(arbolito.safelock.father.name,arbolito.safelock.father.father,newList,celvVersions[versionIndex].versionCount)
             newFather.celv = True
             newFather.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.safelock.father.safelock.children != -1 and arbolito.safelock.father.safelock.version <= version:
-                newFather.children = arbolito.safelock.father.safelock.children
+                newSafe = []
+
+                for childs in arbolito.safelock.father.safelock.children:
+                    newSafe.append(childs)
+                newFather.children = newSafe
             
             if arbolito.safelock.father.safelock.father != -1 and arbolito.safelock.father.safelock.version <= version:
                 newFather.father = arbolito.safelock.father.safelock.father
 
-            newDirectory = directory(arbolito.name,newFather,arbolito.children,celvVersions[versionIndex].versionCount)
+            newList1 = []
+
+            for childs in arbolito.children:
+                newList1.append(childs)
+
+            newDirectory = directory(arbolito.name,newFather,newList1,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
             newDirectory.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.safelock.children != -1:
-                newDirectory.children = arbolito.safelock.children
+                newSafe1 = []
+
+                for childs in arbolito.safelock.children:
+                    newSafe1.append(childs)
+                newDirectory.children = newSafe1
 
             newFather.children.remove(arbolito.name)
             newFather.children.append(newDirectory)
@@ -935,23 +1052,40 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
     elif arbolito.father != None and arbolito.father.celv:
         if arbolito.father.safelock != None and isinstance(arbolito.father, directory):
             print("update 2.2")
+            newList = []
 
-            newFather = directory(arbolito.father.name,arbolito.father.father,arbolito.father.children,celvVersions[versionIndex].versionCount)
+            for childs in arbolito.father.children:
+                newList.append(childs)
+
+            newFather = directory(arbolito.father.name,arbolito.father.father,newList,celvVersions[versionIndex].versionCount)
             newFather.celv = True
             newFather.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.father.safelock.children != -1 and arbolito.father.safelock.version <= version:
-                newFather.children = arbolito.father.safelock.children
+                newSafe = []
+
+                for childs in arbolito.father.safelock.children:
+                    newSafe.append(childs)
+                newFather.children = newSafe
             
             if arbolito.father.safelock.father != -1 and arbolito.father.safelock.version <= version:
                 newFather.father = arbolito.father.safelock.father
 
-            newDirectory = directory(arbolito.name,newFather,arbolito.children,celvVersions[versionIndex].versionCount)
+            newList1 = []
+
+            for childs in arbolito.children:
+                newList.append(childs)
+
+            newDirectory = directory(arbolito.name,newFather,newList1,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
             newDirectory.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
-                newDirectory.children = arbolito.safelock.children
+                newSafe1 = []
+
+                for childs in arbolito.safelock.children:
+                    newSafe1.append(childs)
+                newDirectory.children = newSafe1
             
             if arbolito.safelock.father != -1 and arbolito.safelock.version <= version:
                 newDirectory.father = arbolito.safelock.father
@@ -976,18 +1110,34 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
             
         elif arbolito.father.safelock == None and isinstance(arbolito.father, directory):
             print("update 2.1")
-            newDirectory = directory(arbolito.name,arbolito.father,arbolito.children,celvVersions[versionIndex].versionCount)
+
+            newList = []
+
+            for childs in arbolito.children:
+                newList.append(childs)
+
+            newDirectory = directory(arbolito.name,arbolito.father,newList,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
             newDirectory.celvIndex = celvVersions[versionIndex].id
 
             if arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
-                newDirectory.children = arbolito.safelock.children
+                newSafe = []
+
+                for childs in arbolito.safelock.children:
+                    newSafe.append(childs)
+                newDirectory.children = newSafe
             
             if arbolito.safelock.father != -1 and arbolito.safelock.version <= version:
                 newDirectory.father = arbolito.safelock.father
 
             newDirectory.addChildren(newNode)
-            arbolito.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,arbolito.father.children,-1)
+
+            newList1 = []
+
+            for childs in arbolito.father.children:
+                newList1.append(childs)
+
+            arbolito.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList1,-1)
             arbolito.father.safelock.children.remove(arbolito)
             arbolito.father.safelock.children.append(newDirectory)    
 
@@ -997,12 +1147,23 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
 
     elif arbolito.father != None and (not arbolito.father.celv):
         print("update 3")
-        newRoot = directory(arbolito.name,arbolito.father,arbolito.children,celvVersions[versionIndex].versionCount)
+        newList = []
+
+        for childs in arbolito.children:
+            newList.append(childs)
+
+        newRoot = directory(arbolito.name,arbolito.father,newList,celvVersions[versionIndex].versionCount)
         newRoot.celv = True
         newRoot.celvIndex = celvVersions[versionIndex].id
 
         if arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
-            newRoot.children = arbolito.safelock.children
+            newSafe = []
+
+            for childs in arbolito.safelock.children:
+                newSafe.append(childs)
+            newRoot.children = newSafe
+
+            newRoot.children = newSafe
             
         if arbolito.safelock.father != -1 and arbolito.safelock.version <= version:
             newRoot.father = arbolito.safelock.father
@@ -1018,12 +1179,22 @@ def updateTreeAdd(arbolito, newNode, versionIndex,version):
 
     elif arbolito.father == None:
         print("update 4")
-        newRoot = directory(arbolito.name,arbolito.father,arbolito.children,celvVersions[versionIndex].versionCount)
+
+        newList = []
+
+        for childs in arbolito.children:
+            newList.append(childs)
+
+        newRoot = directory(arbolito.name,arbolito.father,newList,celvVersions[versionIndex].versionCount)
         newRoot.celv = True
         newRoot.celvIndex = celvVersions[versionIndex].id
 
         if arbolito.safelock.children != -1 and arbolito.safelock.version <= version:
-            newRoot.children = arbolito.safelock.children
+            newSafe = []
+
+            for childs in arbolito.safelock.children:
+                newSafe.append(childs)
+            newRoot.children = newSafe
             
         if arbolito.safelock.father != -1 and arbolito.safelock.version <= version:
             newRoot.father = arbolito.safelock.father
@@ -1051,12 +1222,23 @@ def updateChildren(hijo, padre,versionIndex,version):
     elif hijo.safelock != None and hijo.safelock.version <= version:
         print("Entre 3")
         if isinstance(hijo,directory):
-            newDirectory = directory(hijo.name,hijo.father,hijo.children,celvVersions[versionIndex].versionCount)
+
+            newList = []
+
+            for childs in hijo.children:
+                newList.append(childs)
+
+            newDirectory = directory(hijo.name,hijo.father,newList,celvVersions[versionIndex].versionCount)
             newDirectory.celv = True
             newDirectory.celvIndex = celvVersions[versionIndex].id
 
             if hijo.safelock.children != -1:
-                newDirectory.children = hijo.safelock.children
+
+                newSafe = []
+
+            for childs in hijo.safelock.children:
+                newSafe.append(childs)
+                newDirectory.children = newSafe
         
             if hijo.safelock.father != -1:
                 newDirectory.father = hijo.safelock.father
@@ -1100,19 +1282,37 @@ def updateParents(padre, newPadre,versionIndex, version):
             padre.safelock.father.children.remove(padre)
             padre.safelock.father.children.append(newPadre)
         elif padre.safelock.father.safelock == None and padre.safelock.father.version <= version:
-            padre.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,padre.safelock.father.children,-1)
+
+            newList = []
+
+            for childs in padre.safelock.father.children:
+                newList.append(childs)
+
+            padre.safelock.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
             padre.safelock.father.safelock.children.remove(padre)
             padre.safelock.father.safelock.children.append(newPadre)
         elif padre.safelock.father.safelock != None and padre.safelock.father.safelock.version == celvVersions[versionIndex].versionCount:
             padre.safelock.father.safelock.children.remove(padre)
             padre.safelock.father.safelock.children.append(newPadre)
         elif padre.safelock.father.safelock != None and padre.safelock.father.version <= version:
+
+            newList = []
+
+            for childs in padre.father.children:
+                newList.append(childs)
+
             newAbuelo = directory(padre.father.name,padre.father.father,padre.father.children,celvVersions[versionIndex].versionCount)
             newAbuelo.celv = True
             newAbuelo.celvIndex = celvVersions[versionIndex].id
 
             if padre.safelock.father.safelock.children != -1:
-                newAbuelo.children = padre.safelock.father.safelock.children
+
+                safeList = []
+
+                for childs in padre.safelock.father.children:
+                    safeList.append(childs)
+
+                newAbuelo.children = safeList
             
             if padre.safelock.father.safelock.father != -1:
                 newAbuelo.father = padre.safelock.father.safelock.father
@@ -1131,7 +1331,13 @@ def updateParents(padre, newPadre,versionIndex, version):
             padre.father.children.append(newPadre)
         elif padre.father.safelock == None and padre.father.version <= version:
             print("opcion 2")
-            padre.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,padre.father.children,-1)
+
+            newList = []
+
+            for childs in padre.father.children:
+                newList.append(childs)
+
+            padre.father.changeSafelock(celvVersions[versionIndex].versionCount,-1,newList,-1)
             padre.father.safelock.children.remove(padre)
             padre.father.safelock.children.append(newPadre)
         elif padre.father.safelock != None and padre.father.safelock.version == celvVersions[versionIndex].versionCount:
@@ -1140,12 +1346,23 @@ def updateParents(padre, newPadre,versionIndex, version):
             padre.father.safelock.children.append(newPadre)
         elif padre.father.safelock != None and padre.father.safelock.version <= version:
             print("opcion 4")
-            newAbuelo = directory(padre.father.name,padre.father.father,padre.father.children,celvVersions[versionIndex].versionCount)
+            newList = []
+
+            for childs in padre.father.children:
+                newList.append(childs)
+                
+            newAbuelo = directory(padre.father.name,padre.father.father,newList,celvVersions[versionIndex].versionCount)
             newAbuelo.celv = True
             newAbuelo.celvIndex = celvVersions[versionIndex].id
 
             if padre.father.safelock.children != -1 and padre.father.safelock.version <= version:
-                newAbuelo.children = padre.father.safelock.children
+
+                safeList = []
+
+                for childs in padre.father.safelock.children:
+                    safeList.append(childs)
+
+                newAbuelo.children = safeList
             
             if padre.father.safelock.father != -1 and padre.father.safelock.version <= version:
                 newAbuelo.father = padre.father.safelock.father
@@ -1157,7 +1374,6 @@ def updateParents(padre, newPadre,versionIndex, version):
 
             updateParents(padre.father, newAbuelo,versionIndex,version)
 
-    
 
 def print_hijos(arbolito):
     if isinstance(arbolito,directory):
